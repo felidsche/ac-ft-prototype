@@ -1,7 +1,7 @@
 # Adaptive Checkpointing System Prototype
 ## Prerequisites
 
-1. activate the virutal environment for encapsulated dependency management (on MacOs)
+1. activate the virutal environment for encapsulated dependency management (e.g., on MacOs)
 
 `source venv/bin/activate`
 
@@ -25,7 +25,6 @@ _Note_: they are only tested to work on Linux
 
 ```
 .
-├── ...
 ├── src                    # source code files 
 │   ├── analysis          # source code for analysing the cluster trace
 │   ├── clean         # source code for cleaning the cluster trace
