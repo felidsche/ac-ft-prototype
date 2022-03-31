@@ -1,0 +1,36 @@
+apiVersion: "sparkoperator.k8s.io/v1beta2"
+kind: SparkApplication
+metadata:
+  name: failed-inst-alibaba2018-trace
+spec:
+  type: Python
+  pythonVersion: "3"
+  mode: cluster
+  image: "gcr.io/spark-operator/spark-py:v3.1.1"
+  imagePullPolicy: Always
+  sparkConf:
+    # hadoop
+    "spark.hadoop.fs.defaultFS": hdfs://ip:port
+    # event log
+    "spark.eventLog.enabled": "true"
+    "spark.eventLog.dir": hdfs:///spark/job-event-log/
+    "spark.eventLog.logStageExecutorMetrics": "true"
+    # set max resultsize to unlimited
+    "spark.driver.maxResultSize": "0"
+  mainApplicationFile: hdfs:///spark/alibaba2018-trace/failed_instances.py
+  sparkVersion: "3.1.1"
+  restartPolicy:
+    type: Never
+  driver:
+    cores: 3
+    memory: 6144m
+    labels:
+      version: 3.1.1
+    serviceAccount: "spark-operator"
+  executor:
+    instances: 7
+    cores: 3
+    memory: 6144m
+    deleteOnTermination: True
+    labels:
+      version: 3.1.1

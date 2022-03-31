@@ -1,0 +1,38 @@
+apiVersion: "sparkoperator.k8s.io/v1beta2"
+kind: SparkApplication
+metadata:
+  name: gradient-boosted-trees-cv
+spec:
+  type: Scala
+  mode: cluster
+  image: mcd01/spark:v3.0.0-servlet
+  imagePullPolicy: Always
+  sparkConf:
+    # hadoop
+    "spark.hadoop.fs.defaultFS": hdfs://ip:port
+    # event log
+    "spark.eventLog.enabled": "true"
+    "spark.eventLog.dir": hdfs:///spark/job-event-log/
+    "spark.eventLog.logStageExecutorMetrics": "true"
+    # set max resultsize to unlimited
+    "spark.driver.maxResultSize": "0"
+  mainClass: de.felixjanschneider.classification.GBTCVTaskFailBinPred
+  mainApplicationFile: hdfs:///jar-files/scala-1.0-SNAPSHOT-jar-with-dependencies.jar
+  arguments: ["--model-name", "GBT5CV3parall_priorFeat_tune_maxDepth_Iter_Bins_03inst777Seed", "--nested", "hdfs:///spark/alibaba2018-trace/out/batch_jobs_clean_03inst_1task_00015s_1f", "hdfs:///spark/alibaba2018-trace/out/GBT5CV3parall_priorFeat_tune_maxDepth_Iter_Bins_03inst777SeedVal"]
+  sparkVersion: "3.0.0"
+  restartPolicy:
+    type: Never
+  driver: # a pod in k8s
+    cores: 3  # match the executor
+    memory: 8192m  # match the executor
+    labels:
+      version: 3.0.0
+    serviceAccount: "spark-operator"
+  executor: # a pod in k8s
+    instances: 7  # 7 no of executors
+    cores: 3 # each executor has 4 CPUs (i.e. not vCPUs) and we need 1 for the OS and ClusterManager. K8s usually deals with virtual cores
+    memory: 8192m  # 16GB physical RAM (- 15% for k8s and system ~ 14GB), formula: (14/{instances})/1.1 (overhead factor)
+    # keep executors pods after spark app is terminated
+    deleteOnTermination: False  # to check executor logs on failure
+    labels:
+      version: 3.0.0
