@@ -1,4 +1,7 @@
-# Adaptive Checkpointing System Prototype
+# *A*daptive *C*onfiguration of *F*ault *T*olerance Strategies for Distributed Dataflow Jobs
+
+- this repository hosts the prototypical implementation of the proposed system
+
 ## Prerequisites
 
 1. activate the virutal environment for encapsulated dependency management (e.g., on MacOs)
